@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     height:30,
   },
   logo:{
-   left:20,
+    left:20,
   },
   search:{
     width:30,
