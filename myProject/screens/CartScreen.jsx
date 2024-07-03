@@ -1,10 +1,13 @@
-import { View, Image, Text, StyleSheet, Pressable, ScrollView, FlatList } from 'react-native';
-import React from 'react';
+import { View, Image, Text, StyleSheet, Pressable, ScrollView, FlatList,Alert } from 'react-native';
+import React, { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCart } from '../CartContext';
 
-export default function CartScreen({ route }) {
-  const { cart, setCart } = route.params;
 
+export default function CartScreen() {
+  const { cart, setCart } = useCart(); 
+  
+    
   const removeFromCart = async (item) => {
     try {
       const updatedCart = cart.filter(cartItem => cartItem.key !== item.key);
@@ -16,9 +19,22 @@ export default function CartScreen({ route }) {
     }
   };
 
+  const calculateTotalPrice = () => {
+    let total = 0;
+    cart.forEach(item => {
+      const price = parseFloat(item.price.replace('$', ''));
+      if (!isNaN (price)) {
+        total += price;
+      }
+    });
+    return total.toFixed(0);
+  };
+
+  const totalPrice = calculateTotalPrice();
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+  <View style={styles.container}>
+  <View style={styles.header}>
         <Image source={require('./../assets/images/Logo.png')} style={styles.logo} />
         <Image source={require('./../assets/images/Search.png')} style={styles.search} />
       </View>
@@ -41,7 +57,10 @@ export default function CartScreen({ route }) {
       </ScrollView>
       )}
       keyExtractor={item => item.key}/>
-     
+      <View style={styles.totalPriceContainer}>
+        <Text style={styles.totalPriceText}>EST. TOTAL</Text>
+        <Text style={styles.totalPrice}>${totalPrice}</Text>
+      </View>
       <Pressable style={styles.checkoutButton}>
         <View style={styles.checkoutButtonContent}>
           <Image source={require('./../assets/images/shoppingBag.png')} style={styles.checkoutImage} />
@@ -74,10 +93,10 @@ const styles = StyleSheet.create({
   checkout: {
     marginTop: 25,
     fontSize: 24,
-    fontWeight: '400',
+    fontWeight: '300',
     letterSpacing: 3,
     textAlign: 'center',
-    textDecorationLine:'underline'
+    textDecorationLine:'underline',
   },
   cartContainer: {
     paddingBottom: 10,
@@ -116,6 +135,23 @@ const styles = StyleSheet.create({
   remove: {
     marginTop: 40,
     marginLeft: 'auto',
+  },
+  totalPriceContainer: {
+    flexDirection:'row',
+    justifyContent:'space-between',
+    marginTop: 20,
+    marginBottom: 80,
+  },
+  totalPriceText: {
+    fontSize: 22,
+    fontWeight: '300',
+    letterSpacing:3,
+  },
+  totalPrice: {
+    fontSize: 22,
+    fontWeight: '400',
+    letterSpacing:2,
+    color:'#FFA100',
   },
   checkoutButton: {
     position: 'absolute',

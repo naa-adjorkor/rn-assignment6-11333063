@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, Image, Pressable, FlatList, ScrollView, Alert} 
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import Products from '../components/Products';
 import {ProductData}  from '../Data/ProductData';
+import { useCart } from '../CartContext';
 
 export default function HomeScreen({ navigation }) {
-  const [cart, setCart] = useState([]);
+  const { cart, setCart } = useCart();
 
   useEffect(() => {
     const loadCart = async () => {
@@ -20,10 +21,10 @@ export default function HomeScreen({ navigation }) {
       }
     };
     loadCart();
-  }, []);
+  }, [setCart]);
 
   const handleCart = () => {
-    navigation.navigate('Cart', { cart, setCart });
+    navigation.navigate('Cart');
   };
 
   const addToCart = async (item) => {
